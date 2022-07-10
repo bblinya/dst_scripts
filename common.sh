@@ -1,11 +1,10 @@
-
 STEAM_CMD_HOME="$HOME/steamcmd"
 
-DST_HOME="$HOME/DST"
+DST_HOME="$HOME/dst"
 
 DST_KLEI="$HOME/.klei/DoNotStarveTogether"
 
-TEMPLATE_DIR="templates"
+TEMPLATE_DIR="$(pwd)/templates"
 
 CLUSTER_NAME="BBWM_2"
 
