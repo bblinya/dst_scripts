@@ -5,7 +5,9 @@ return {
  	["workshop-2584216489"] = { configuration_options = {}, enabled = true },
 
 -- Fast Travel
-	["workshop-458587300"] = { configuration_options = {}, enabled = true },
+  ["workshop-458587300"] = { configuration_options = {
+    Traval_Cost = 128,
+  }, enabled = true },
 
 -- Myth Words Theme: 神话书说(80M)
   ["workshop-1991746508"] = { configuration_options = {}, enabled = true },
@@ -14,7 +16,7 @@ return {
   ["workshop-1699194522"] = { configuration_options = {}, enabled = true },
 
 -- Extra Equip Slots: may have problem through caves
-	["workshop-375850593"] = { configuration_options = {}, enabled = true },
+  -- ["workshop-375850593"] = { configuration_options = {}, enabled = true },
 
 -- Increased Stack Size
 	["workshop-374550642"] = { configuration_options = {}, enabled = true },
@@ -32,11 +34,29 @@ return {
 -- Infinite Tent Uses
   ["workshop-356930882"] = { configuration_options = {}, enabled = true },
 
+-- Restart(重生)
+  ["workshop-462434129"] = { configuration_options = {
+    MOD_RESTART_CD_RESTART = 0,
+    MOD_RESTART_CD_RESURRECT = 0,
+    MOD_RESTART_CD_KILL = 0,
+  }, enabled = true },
+
+-- 冰箱  no rod
+  ["workshop-1898181913"] = { enabled = true },
+
+-- Health Info
+  ["workshop-375859599"] = { enabled = true },
+
+-- Item Info
+  -- ["workshop-836583293"] = { enabled = true },
+
+-- Geometric Placement
+  -- ["workshop-351325790"] = { enabled = true },
 
 -- Character Mods
 
 -- 伊蕾娜 5M
-  ["workshop-2640834455"] = { configuration_options = {}, enabled = true },
+  -- ["workshop-2640834455"] = { configuration_options = {}, enabled = true },
 
 -- Remilia Scarlet: 蕾米莉娅斯卡雷特(1M)
 	["workshop-684098549"] = { configuration_options = {}, enabled = true },

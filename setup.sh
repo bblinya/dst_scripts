@@ -23,8 +23,6 @@ source common.sh
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
 ln -sf ${TEMPLATE_DIR}/init_worldgenoverride.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
 
-ln -sf ${TEMPLATE_DIR}/dedicated_server_mods_setup.lua "$DST_HOME/mods/"
-
 ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
 ln -sf ${TEMPLATE_DIR}/cluster_token.txt ${DST_KLEI}/${CLUSTER_NAME}/
 

@@ -9,4 +9,4 @@ $STEAM_CMD_HOME/steamcmd.sh \
 	+login anonymous \
 	+app_update 343050 validate +quit
 
-source ./update_dst.sh
+source ./update_mods.sh
