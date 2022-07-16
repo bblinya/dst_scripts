@@ -6,7 +6,7 @@ DST_KLEI="$HOME/.klei/DoNotStarveTogether"
 
 TEMPLATE_DIR="$(pwd)/templates"
 
-CLUSTER_NAME="BBWM_2"
+CLUSTER_NAME="BBWM_1"
 
 CLUSTER_PATH="$DST_KLEI/$CLUSTER_NAME"
 

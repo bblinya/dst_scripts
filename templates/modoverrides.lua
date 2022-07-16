@@ -16,7 +16,7 @@ return {
   ["workshop-1699194522"] = { configuration_options = {}, enabled = true },
 
 -- Extra Equip Slots: may have problem through caves
-  -- ["workshop-375850593"] = { configuration_options = {}, enabled = true },
+  ["workshop-375850593"] = { configuration_options = {}, enabled = true },
 
 -- Increased Stack Size
 	["workshop-374550642"] = { configuration_options = {}, enabled = true },
@@ -43,6 +43,12 @@ return {
 
 -- 冰箱  no rod
   ["workshop-1898181913"] = { enabled = true },
+
+-- No Thermal Stone Durability
+  ["workshop-466732225"] = { enabled = true },
+
+-- Mineable Gems
+  ["workshop-380423963"] = { enabled = true },
 
 -- Health Info
   ["workshop-375859599"] = { enabled = true },

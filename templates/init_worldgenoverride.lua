@@ -3,7 +3,7 @@ return {
  override_enabled = true,
        unprepared = { -- "never", "rare", "default", "often", "always"
                berrybush = "often",
-               cactus = "default", -- 仙人掌
+               cactus = "often", -- 仙人掌
                carrot = "often",
                mushroom = "often",
        },
