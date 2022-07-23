@@ -2,7 +2,7 @@ return {
 --	["workshop-"] = { configuration_options = {}, enabled = true },
 
 -- -- Wooden Shelter
- 	["workshop-2584216489"] = { configuration_options = {}, enabled = true },
+   -- ["workshop-2584216489"] = { configuration_options = {}, enabled = true },
 
 -- Fast Travel
   ["workshop-458587300"] = { configuration_options = {
@@ -22,7 +22,7 @@ return {
 	["workshop-374550642"] = { configuration_options = {}, enabled = true },
 
 -- 	该物品允许玩家移动建筑。 您可以把一个空的【移动盒子】拖到一个建筑上开始打包。
-  ["workshop-1079538195"] = { configuration_options = {}, enabled = true },
+  -- ["workshop-1079538195"] = { configuration_options = {}, enabled = true },
 
 -- 快速采集:
 -- 	使浆果、草、树枝等都能快速采集
@@ -50,6 +50,9 @@ return {
 -- Mineable Gems
   ["workshop-380423963"] = { enabled = true },
 
+-- Show Me
+  ["workshop-666155465"] = { enabled = true },
+
 -- Health Info
   ["workshop-375859599"] = { enabled = true },
 
@@ -65,10 +68,10 @@ return {
   -- ["workshop-2640834455"] = { configuration_options = {}, enabled = true },
 
 -- Remilia Scarlet: 蕾米莉娅斯卡雷特(1M)
-	["workshop-684098549"] = { configuration_options = {}, enabled = true },
+	-- ["workshop-684098549"] = { configuration_options = {}, enabled = true },
 
 -- SONOKO NOGI: 乃木园子(22M)
-	["workshop-1645013096"] = { configuration_options = {}, enabled = true },
+	-- ["workshop-1645013096"] = { configuration_options = {}, enabled = true },
 
 -- Flandre Scarlet
 	-- ["workshop-620716967"] = { configuration_options = {}, enabled = true },
@@ -96,5 +99,5 @@ return {
 --	["workshop-791838548"] = { configuration_options = {}, enabled = true },
 --
 -- Madoka Kaname: 小圆
-  ["workshop-461627386"] = { configuration_options = {}, enabled = true },
+  -- ["workshop-461627386"] = { configuration_options = {}, enabled = true },
 }
