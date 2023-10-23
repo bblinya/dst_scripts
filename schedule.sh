@@ -1,7 +1,8 @@
 #update of server
 
-cd /home/admin/dst_scripts
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-screen -dr dst_server -X quit
+cd ${SCRIPT_DIR}
+./stop.sh
 ./update_dst.sh
-./restart.sh 
+./start.sh

@@ -4,20 +4,20 @@ source common.sh
 
 # init possible log files
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
-ln -sf ${TEMPLATE_DIR}/init_worldgenoverride.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
+# ln -sf ${TEMPLATE_DIR}/worldgenoverride_init.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
 
 ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
 ln -sf ${TEMPLATE_DIR}/cluster_token.txt ${DST_KLEI}/${CLUSTER_NAME}/
 
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Master
-cp -f ${TEMPLATE_DIR}/worldgenoverride.lua ${DST_KLEI}/${CLUSTER_NAME}/Master/
+cp -f ${TEMPLATE_DIR}/worldgenoverride_much.lua ${DST_KLEI}/${CLUSTER_NAME}/Master/worldgenoverride.lua
 ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Master/
-ln -sf ${TEMPLATE_DIR}/master_server.ini ${DST_KLEI}/${CLUSTER_NAME}/Master/server.ini
+ln -sf ${TEMPLATE_DIR}/server_master.ini ${DST_KLEI}/${CLUSTER_NAME}/Master/server.ini
 
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Caves
-cp -f ${TEMPLATE_DIR}/cave_worldgenoverride.lua ${DST_KLEI}/${CLUSTER_NAME}/Caves/worldgenoverride.lua
+cp -f ${TEMPLATE_DIR}/worldgenoverride_much_cave.lua ${DST_KLEI}/${CLUSTER_NAME}/Caves/worldgenoverride.lua
 ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Caves/
-ln -sf ${TEMPLATE_DIR}/cave_server.ini ${DST_KLEI}/${CLUSTER_NAME}/Caves/server.ini
+ln -sf ${TEMPLATE_DIR}/server_cave.ini ${DST_KLEI}/${CLUSTER_NAME}/Caves/server.ini
 
 function check_for_file()
 {
@@ -40,5 +40,5 @@ run_shared+=(-shard)
 
 cd ${DST_HOME}/bin
 
-"${run_shared[@]}" Caves | sed 's/^/Caves: /' &
+"${run_shared[@]}" Caves  | sed 's/^/ Caves: /' & 
 "${run_shared[@]}" Master | sed 's/^/Master: /'
