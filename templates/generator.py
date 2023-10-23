@@ -48,12 +48,16 @@ class ModsConfig:
 
         print("populate done!")
 
+def ss(arg: str):
+    return "\"%s\"" % arg
+
 
 if __name__ == "__main__":
     mods = ModsConfig()
 
     # themes
-    mods.add_config("1991746508", desc="Myth Words Theme: 神话书说(80M)", ShowBuff="true")
+    mods.add_config("1991746508", desc="Myth Words Theme: 神话书说(80M)",
+                    language=ss("CHINESE"), ShowBuff="true")
     mods.add_config("1699194522", desc="Myth Words Characters: 100M")
 
     # map
@@ -75,10 +79,13 @@ if __name__ == "__main__":
     mods.add_config("466732225", desc="No Thermal Stone Durability")
     mods.add_config("380423963", desc="Mineable Gems")
     mods.add_config("1595631294", desc="智能小木牌")
+    mods.add_config("1289779251", desc="Cherry Forest")
+    mods.add_config("2528541304", desc="Not Enough Turfs")
 
     # characters
     mods.add_config("1645013096", desc="SONOKO NOGI: 乃木园子(22M)")
-    mods.add_config("1837053004", desc="晓美焰 11.042M")
+    mods.add_config("1837053004", desc="晓美焰 11.042M",
+                    language=ss("CHI"), skillkey_v2=ss("T"))
 
     mods.populate()
 

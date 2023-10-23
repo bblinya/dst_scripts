@@ -1,6 +1,7 @@
 return {
 -- Myth Words Theme: 神话书说(80M)
 ["workshop-1991746508"] = { configuration_options = { 
+    language = "CHINESE",
     ShowBuff = true
  }, enabled = true },
 
@@ -52,9 +53,18 @@ return {
 -- 智能小木牌
 ["workshop-1595631294"] = { configuration_options = {  }, enabled = true },
 
+-- Cherry Forest
+["workshop-1289779251"] = { configuration_options = {  }, enabled = true },
+
+-- Not Enough Turfs
+["workshop-2528541304"] = { configuration_options = {  }, enabled = true },
+
 -- SONOKO NOGI: 乃木园子(22M)
 ["workshop-1645013096"] = { configuration_options = {  }, enabled = true },
 
 -- 晓美焰 11.042M
-["workshop-1837053004"] = { configuration_options = {  }, enabled = true }
+["workshop-1837053004"] = { configuration_options = { 
+    language = "CHI",
+    skillkey_v2 = "T"
+ }, enabled = true }
 }
