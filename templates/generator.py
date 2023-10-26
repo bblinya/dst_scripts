@@ -7,7 +7,7 @@ def config_modoverride(idt, ident, desc=None, **kwargs):
     conf = ["%s%s = %s" % (idt_str, k, v) for k, v in kwargs.items()]
     conf = ",\n".join(conf)
     conf = conf and ("\n" + conf + "\n")
-    conf = "[\"workshop-%s\"] = { configuration_options = { %s }, enabled = true }" % (idt, conf)
+    conf = "[\"workshop-%s\"] = { configuration_options = {%s}, enabled = true }" % (idt, conf)
     if desc:
         conf = "-- %s\n%s" % (desc, conf)
     return conf
@@ -62,6 +62,7 @@ if __name__ == "__main__":
 
     # map
     mods.add_config("666155465", desc="Show Me")
+    mods.add_config("1207269058", desc="简易血条DST")
     mods.add_config("1860955902", desc="Global Position")
     mods.add_config("458587300", desc="Fast Travel", Traval_Cost=128)
     mods.add_config("462434129", desc="Restart(重生)",
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     mods.add_config("2823458540", desc="富贵险中求")
     mods.add_config("374550642", desc="Increased Stack Size")
     mods.add_config("375850593", desc="Extra Equip Slots: may have problem through caves")
+    mods.add_config("2950956942", desc="更多动作")
 
     # items
     mods.add_config("356930882", desc="Infinite Tent Uses")
@@ -81,9 +83,11 @@ if __name__ == "__main__":
     mods.add_config("1595631294", desc="智能小木牌")
     mods.add_config("1289779251", desc="Cherry Forest")
     mods.add_config("2528541304", desc="Not Enough Turfs")
+    mods.add_config("1607644339", desc="More cooking/整组烹饪、整组喂鸟")
 
     # characters
     mods.add_config("1645013096", desc="SONOKO NOGI: 乃木园子(22M)")
+    mods.add_config("684098549", desc="Remilia Scarlet 【蕾米莉娅斯卡雷特】")
     mods.add_config("1837053004", desc="晓美焰 11.042M",
                     language=ss("CHI"), skillkey_v2=ss("T"))
 
