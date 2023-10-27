@@ -21,7 +21,7 @@ return {
     lichen="default",
     loop="default",
     marshbush="default",
-    monkey="default",
+    monkey="uncommon",
     mushroom="default",
     mushtree="default",
     prefabswaps_start="default",
@@ -77,6 +77,5 @@ return {
     toadstool="default",
     weather="default",
     wormattacks="default",
-
 	},
 }
