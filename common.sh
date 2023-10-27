@@ -10,6 +10,11 @@ CLUSTER_NAME="BBWM"
 
 CLUSTER_PATH="$DST_KLEI/$CLUSTER_NAME"
 
+SC_NAME="dst_server"
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+LOG_DIR="${SCRIPT_DIR}/logs"
+
 function fail()
 {
 	echo Error: "$@" >&2

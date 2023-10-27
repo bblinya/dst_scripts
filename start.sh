@@ -2,13 +2,9 @@
 #
 echo "start dst server ..."
 
-NAME="dst_server"
+source common.sh
 
-screen -dmS ${NAME}
-
-# mkdir -p "${LOG_DIR}"
-# screen -dr ${NAME} -X logfile "${LOG_DIR}/$(date +%Y-%m-%d).log"
-
-screen -dr ${NAME} -X stuff "./exec.sh\n"
+screen -dmS ${SC_NAME}
+screen -dr ${SC_NAME} -X stuff "cd ${SCRIPT_DIR} && ./exec.sh\n"
 
 echo "started dst server."

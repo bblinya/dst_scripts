@@ -2,9 +2,6 @@
 
 source common.sh
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-LOG_DIR="${SCRIPT_DIR}/logs"
-
 find ${LOG_DIR} -mtime +3 -name ".*dst.log" -exec rm -rf {} \;
 
 # init possible log files
@@ -23,13 +20,6 @@ mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Caves
 cp -f ${TEMPLATE_DIR}/worldgenoverride_much_cave.lua ${DST_KLEI}/${CLUSTER_NAME}/Caves/worldgenoverride.lua
 ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Caves/
 ln -sf ${TEMPLATE_DIR}/server_cave.ini ${DST_KLEI}/${CLUSTER_NAME}/Caves/server.ini
-
-function check_for_file()
-{
-	if [ ! -e "$1" ]; then
-		fail "Missing file: $1"
-	fi
-}
 
 check_for_file "$DST_KLEI/$CLUSTER_NAME/cluster.ini"
 check_for_file "$DST_KLEI/$CLUSTER_NAME/cluster_token.txt"
