@@ -2,6 +2,11 @@
 
 source common.sh
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+LOG_DIR="${SCRIPT_DIR}/logs"
+
+find ${LOG_DIR} -mtime +3 -name ".*dst.log" -exec rm -rf {} \;
+
 # init possible log files
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
 # ln -sf ${TEMPLATE_DIR}/worldgenoverride_init.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
@@ -38,7 +43,13 @@ run_shared+=(-cluster "$CLUSTER_NAME")
 run_shared+=(-monitor_parent_process $$)
 run_shared+=(-shard)
 
+LOG_FILE="${LOG_DIR}/dst.log.$(date +%Y-%m-%d.%H:%M:%S)"
+ln -sf ${LOG_FILE} "${LOG_DIR}/dst.log"
+
+# unbuffer echo "log file: ${LOG_FILE}" | tee ${LOG_FILE}
+# exit
+
 cd ${DST_HOME}/bin
 
-"${run_shared[@]}" Caves  | sed 's/^/ Caves: /' & 
-"${run_shared[@]}" Master | sed 's/^/Master: /'
+stdbuf -oL "${run_shared[@]}" Caves  2>&1 | sed -u 's/^/ Caves: /' | tee -a ${LOG_FILE} & 
+stdbuf -oL "${run_shared[@]}" Master 2>&1 | sed -u 's/^/Master: /' | tee -a ${LOG_FILE}
