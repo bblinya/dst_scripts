@@ -9,6 +9,7 @@ mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
 # ln -sf ${TEMPLATE_DIR}/worldgenoverride_init.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
 
 ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
+ln -sf ${TEMPLATE_DIR}/adminlist.txt ${DST_KLEI}/${CLUSTER_NAME}/
 ln -sf ${TEMPLATE_DIR}/cluster_token.txt ${DST_KLEI}/${CLUSTER_NAME}/
 
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Master
@@ -33,7 +34,7 @@ run_shared+=(-cluster "$CLUSTER_NAME")
 run_shared+=(-monitor_parent_process $$)
 run_shared+=(-shard)
 
-LOG_FILE="${LOG_DIR}/dst.log.$(date +%Y-%m-%d.%H:%M:%S)"
+LOG_FILE="${LOG_DIR}/dst.log.$(date +%m-%d.%H:%M:%S)"
 ln -sf ${LOG_FILE} "${LOG_DIR}/dst.log"
 
 # unbuffer echo "log file: ${LOG_FILE}" | tee ${LOG_FILE}

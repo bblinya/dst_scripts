@@ -8,6 +8,9 @@ return {
 -- Myth Words Characters: 100M
 ["workshop-1699194522"] = { configuration_options = {}, enabled = true },
 
+-- Cherry Forest
+["workshop-1289779251"] = { configuration_options = {}, enabled = true },
+
 -- Show Me
 ["workshop-666155465"] = { configuration_options = {}, enabled = true },
 
@@ -41,9 +44,6 @@ return {
 -- Extra Equip Slots: may have problem through caves
 ["workshop-375850593"] = { configuration_options = {}, enabled = true },
 
--- 更多动作
-["workshop-2950956942"] = { configuration_options = {}, enabled = true },
-
 -- Infinite Tent Uses
 ["workshop-356930882"] = { configuration_options = {}, enabled = true },
 
@@ -59,9 +59,6 @@ return {
 -- 智能小木牌
 ["workshop-1595631294"] = { configuration_options = {}, enabled = true },
 
--- Cherry Forest
-["workshop-1289779251"] = { configuration_options = {}, enabled = true },
-
 -- Not Enough Turfs
 ["workshop-2528541304"] = { configuration_options = {}, enabled = true },
 
@@ -72,11 +69,5 @@ return {
 ["workshop-1645013096"] = { configuration_options = {}, enabled = true },
 
 -- Remilia Scarlet 【蕾米莉娅斯卡雷特】
-["workshop-684098549"] = { configuration_options = {}, enabled = true },
-
--- 晓美焰 11.042M
-["workshop-1837053004"] = { configuration_options = {
-    language = "CHI",
-    skillkey_v2 = "T"
-}, enabled = true }
+["workshop-684098549"] = { configuration_options = {}, enabled = true }
 }
