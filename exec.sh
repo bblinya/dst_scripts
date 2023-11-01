@@ -2,7 +2,7 @@
 
 source common.sh
 
-find ${LOG_DIR} -mtime +3 -name ".*dst.log" -exec rm -rf {} \;
+find ${LOG_DIR} -mtime +3 -name "dst.log.*" -exec rm -rf {} \;
 
 # init possible log files
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}

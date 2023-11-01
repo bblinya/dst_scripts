@@ -9,5 +9,5 @@ echo "$(date +%Y-%m-%d/%H:%M:%S)> update dst in schedule" >> ${SCRIPT_DIR}/logs/
 
 cd ${SCRIPT_DIR}
 ./stop.sh
-# ./update_dst.sh
+./update_dst.sh
 ./start.sh
