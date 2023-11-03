@@ -80,6 +80,7 @@ if __name__ == "__main__":
     # map
     mods.add_config("666155465", desc="Show Me")
     mods.add_config("1207269058", desc="简易血条DST")
+    mods.add_config("1301033176", desc="中文语言包")
     mods.add_config("1860955902", desc="Global Position")
     mods.add_config("458587300", desc="Fast Travel", Traval_Cost=128)
     mods.add_config("462434129", desc="Restart(重生)",
@@ -97,7 +98,8 @@ if __name__ == "__main__":
     mods.add_config("1898181913", desc="冰箱  no rod")
     mods.add_config("466732225", desc="No Thermal Stone Durability")
     mods.add_config("380423963", desc="Mineable Gems")
-    mods.add_config("1595631294", desc="智能小木牌")
+    mods.add_config("1595631294", desc="智能小木牌",
+                    Icebox=True, DragonflyChest=True)
     mods.add_config("2528541304", desc="Not Enough Turfs")
     mods.add_config("1607644339", desc="More cooking/整组烹饪、整组喂鸟")
 

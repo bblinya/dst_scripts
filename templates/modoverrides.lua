@@ -17,6 +17,9 @@ return {
 -- 简易血条DST
 ["workshop-1207269058"] = { configuration_options = {}, enabled = true },
 
+-- 中文语言包
+["workshop-1301033176"] = { configuration_options = {}, enabled = true },
+
 -- Global Position
 ["workshop-1860955902"] = { configuration_options = {}, enabled = true },
 
@@ -57,7 +60,10 @@ return {
 ["workshop-380423963"] = { configuration_options = {}, enabled = true },
 
 -- 智能小木牌
-["workshop-1595631294"] = { configuration_options = {}, enabled = true },
+["workshop-1595631294"] = { configuration_options = {
+    Icebox = true,
+    DragonflyChest = true
+}, enabled = true },
 
 -- Not Enough Turfs
 ["workshop-2528541304"] = { configuration_options = {}, enabled = true },
