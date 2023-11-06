@@ -34,7 +34,7 @@ run_shared+=(-cluster "$CLUSTER_NAME")
 run_shared+=(-monitor_parent_process $$)
 run_shared+=(-shard)
 
-LOG_FILE="${LOG_DIR}/dst.log.$(date +%m-%d.%H:%M:%S)"
+LOG_FILE="${LOG_DIR}/dst.log.$(date +%m-%d,%H.%M.%S)"
 ln -sf ${LOG_FILE} "${LOG_DIR}/dst.log"
 
 # unbuffer echo "log file: ${LOG_FILE}" | tee ${LOG_FILE}
