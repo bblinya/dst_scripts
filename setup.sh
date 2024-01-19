@@ -23,7 +23,7 @@ cd ${working_dir}
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
 # ln -sf ${TEMPLATE_DIR}/worldgenoverride_init.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
 
-ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
+# ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
 ln -sf ${TEMPLATE_DIR}/adminlist.txt ${DST_KLEI}/${CLUSTER_NAME}/
 # ln -sf ${TEMPLATE_DIR}/cluster_token.txt ${DST_KLEI}/${CLUSTER_NAME}/
 

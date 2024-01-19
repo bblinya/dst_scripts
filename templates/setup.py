@@ -101,8 +101,7 @@ authentication_port = {authentication_port}
 def config_cluster_ini():
     with open(path.join(cluster_path, "cluster.ini"), "w") as f:
         f.write(CLUSTER_INI_TEMP.format(
-            name=cluster.name,
-            desc=cluster.desc,
+            name=cluster.name, desc=cluster.desc,
             max_players=cluster.max_players,
             password=cluster.password,
             master_port=cluster.master_port,))
