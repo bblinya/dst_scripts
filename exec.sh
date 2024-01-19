@@ -2,25 +2,7 @@
 
 source common.sh
 
-find ${LOG_DIR} -mtime +3 -name "dst.log.*" -exec rm -rf {} \;
-
-# init possible log files
-mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
-# ln -sf ${TEMPLATE_DIR}/worldgenoverride_init.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
-
-ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
-ln -sf ${TEMPLATE_DIR}/adminlist.txt ${DST_KLEI}/${CLUSTER_NAME}/
-ln -sf ${TEMPLATE_DIR}/cluster_token.txt ${DST_KLEI}/${CLUSTER_NAME}/
-
-mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Master
-cp -f ${TEMPLATE_DIR}/worldgenoverride_much.lua ${DST_KLEI}/${CLUSTER_NAME}/Master/worldgenoverride.lua
-ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Master/
-ln -sf ${TEMPLATE_DIR}/server_master.ini ${DST_KLEI}/${CLUSTER_NAME}/Master/server.ini
-
-mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Caves
-cp -f ${TEMPLATE_DIR}/worldgenoverride_much_cave.lua ${DST_KLEI}/${CLUSTER_NAME}/Caves/worldgenoverride.lua
-ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Caves/
-ln -sf ${TEMPLATE_DIR}/server_cave.ini ${DST_KLEI}/${CLUSTER_NAME}/Caves/server.ini
+source setup.sh
 
 check_for_file "$DST_KLEI/$CLUSTER_NAME/cluster.ini"
 check_for_file "$DST_KLEI/$CLUSTER_NAME/cluster_token.txt"
@@ -33,6 +15,9 @@ run_shared=("${DST_HOME}/bin/dontstarve_dedicated_server_nullrenderer")
 run_shared+=(-cluster "$CLUSTER_NAME")
 run_shared+=(-monitor_parent_process $$)
 run_shared+=(-shard)
+
+mkdir -p ${LOG_DIR}
+find ${LOG_DIR} -mtime +3 -name "dst.log.*" -exec rm -rf {} \;
 
 LOG_FILE="${LOG_DIR}/dst.log.$(date +%m-%d,%H.%M.%S)"
 ln -sf ${LOG_FILE} "${LOG_DIR}/dst.log"
