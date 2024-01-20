@@ -18,6 +18,7 @@ class ClusterConfig:
     master_port: int = 10888
 
     # server ini
+    # c_connect("ip", server_port)
     server_port: int = 11000
     steam_server_port: int = 27016
     authentication_port: int = 8768

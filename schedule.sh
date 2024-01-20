@@ -5,7 +5,9 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo "${SCRIPT_DIR}"
 
-echo "$(date +%Y-%m-%d/%H:%M:%S)> update dst in schedule" >> ${SCRIPT_DIR}/logs/schedule.log
+source ${SCRIPT_DIR}/common.sh
+
+echo "$(date +%Y-%m-%d/%H:%M:%S)> update dst in schedule" >> ${LOG_DIR}/schedule.log
 
 cd ${SCRIPT_DIR}
 ./stop.sh

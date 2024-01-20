@@ -2,5 +2,5 @@
 
 source common.sh
 
-less "${SCRIPT_DIR}/logs/dst.log"
-# tail -f "${SCRIPT_DIR}/logs/dst.log"
+less +F "${LOG_DIR}/dst.log"
+# tail -f "${LOG_DIR}/dst.log"

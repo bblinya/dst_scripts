@@ -23,7 +23,7 @@ export CLUSTER_PATH="$DST_KLEI/$CLUSTER_NAME"
 SC_NAME="dst_server_${CLUSTER_NAME}"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-LOG_DIR="${SCRIPT_DIR}/logs"
+LOG_DIR="${SCRIPT_DIR}/logs_${CLUSTER_NAME}"
 
 function fail()
 {
