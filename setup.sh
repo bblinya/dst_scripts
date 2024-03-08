@@ -24,15 +24,21 @@ mkdir -p ${DST_KLEI}/${CLUSTER_NAME}
 # ln -sf ${TEMPLATE_DIR}/worldgenoverride_init.lua ${DST_KLEI}/${CLUSTER_NAME}/worldgenoverride.lua
 
 # ln -sf ${TEMPLATE_DIR}/cluster.ini ${DST_KLEI}/${CLUSTER_NAME}/
+rm -rf ${DST_KLEI}/${CLUSTER_NAME}/cluster.ini
+rm -rf ${DST_KLEI}/${CLUSTER_NAME}/cluster_token.txt
 ln -sf ${TEMPLATE_DIR}/adminlist.txt ${DST_KLEI}/${CLUSTER_NAME}/
 # ln -sf ${TEMPLATE_DIR}/cluster_token.txt ${DST_KLEI}/${CLUSTER_NAME}/
 
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Master
+rm -rf ${DST_KLEI}/${CLUSTER_NAME}/Master/modoverrides.lua
+rm -rf ${DST_KLEI}/${CLUSTER_NAME}/Master/server.ini
 cp -f ${TEMPLATE_DIR}/worldgenoverride_much.lua ${DST_KLEI}/${CLUSTER_NAME}/Master/worldgenoverride.lua
 # ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Master/
 # ln -sf ${TEMPLATE_DIR}/server_master.ini ${DST_KLEI}/${CLUSTER_NAME}/Master/server.ini
 
 mkdir -p ${DST_KLEI}/${CLUSTER_NAME}/Caves
+rm -rf ${DST_KLEI}/${CLUSTER_NAME}/Caves/modoverrides.lua
+rm -rf ${DST_KLEI}/${CLUSTER_NAME}/Caves/server.ini
 cp -f ${TEMPLATE_DIR}/worldgenoverride_much_cave.lua ${DST_KLEI}/${CLUSTER_NAME}/Caves/worldgenoverride.lua
 # ln -sf ${TEMPLATE_DIR}/modoverrides.lua $DST_KLEI/$CLUSTER_NAME/Caves/
 # ln -sf ${TEMPLATE_DIR}/server_cave.ini ${DST_KLEI}/${CLUSTER_NAME}/Caves/server.ini

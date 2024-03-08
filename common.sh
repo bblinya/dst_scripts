@@ -12,6 +12,7 @@ TEMPLATE_DIR="$(pwd)/templates"
 if [ -z ${CLUSTER_NAME+x} ]; then 
   echo "CLUSTER NAME is unset"; 
   echo "Add CLUSTER_NAME=name before command.";
+  echo "Available Options: BBWM, Myth, CrownBios"
   echo "Or execute cmd: export CLUSTER_NAME=?"
   exit -1;
 fi
