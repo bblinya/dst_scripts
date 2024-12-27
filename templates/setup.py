@@ -41,8 +41,9 @@ CLUSTERS = [
         server_port=12000,
         steam_server_port=27116,
         authentication_port=8868,),
+    ClusterConfig("Flowers", TOKEN_BBWM_1, "4064"),
         ]
-MYTH, BBWM, CROWNBIOS = CLUSTERS
+MYTH, BBWM, CROWNBIOS, FLOWERS = CLUSTERS
 
 cluster = os.environ.get("CLUSTER_NAME", MYTH)
 assert cluster in CLUSTERS, cluster
@@ -198,6 +199,13 @@ if __name__ == "__main__":
     if cluster in [ MYTH, BBWM, ]:
         mods.add_config("1289779251", desc="Cherry Forest")
 
+    if cluster == FLOWERS:
+        mods.add_config("3361615927", desc="田园物语-花卉篇")
+
+    mods.add_config("3050607025", desc="防卡好多招",
+                    STACK_SIZE=999, TREES_NO_STUMP=False,
+                    TWIGGY=True,)
+
     # map
     mods.add_config("666155465", desc="Show Me")
     mods.add_config("1207269058", desc="简易血条DST")
@@ -212,7 +220,7 @@ if __name__ == "__main__":
     mods.add_config("501385076", desc="快速采集")
     if cluster in [ MYTH, BBWM, ]:
         mods.add_config("2823458540", desc="富贵险中求")
-    mods.add_config("374550642", desc="Increased Stack Size")
+    # mods.add_config("374550642", desc="Increased Stack Size")
     mods.add_config("375850593", desc="Extra Equip Slots: may have problem through caves")
     # mods.add_config("2950956942", desc="更多动作")
 

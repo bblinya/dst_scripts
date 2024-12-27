@@ -1,0 +1,307 @@
+#!/usr/bin/env python3
+
+import os
+import time
+import sys
+import logging
+from os import path
+from datetime import datetime
+from dataclasses import dataclass
+
+# set up dependencies
+__ROOT__ = path.dirname(path.realpath(__file__))
+sys.path.insert(0, path.join(__ROOT__, "python"))
+sys.path.insert(0, path.join(__ROOT__, "scripts/python"))
+
+from dst import common, cluster, mods
+
+from bbcode.common import parser, log, bash
+from bbcode.common.parser import root_parser, sub_parser, ex_options
+
+@parser.register_command("mods", help="Mod Manager")
+def dst_mods(args):
+    """ Mod Manager: add/del/print mod info. """
+    mods.config_mods()
+
+@parser.register_command("status", help="Summary DST")
+def dst_status(args):
+    """ Print Clusters' Information. """
+    logging.info("Cluster Running Status:")
+    for c in common.ALL_CLUSTERS:
+        status = log.color_string("RUNNING", log.INFO) \
+                if is_dst_running(c) else \
+                log.color_string("STOPPED", log.ERROR)
+        logging.info("{:>10}: {}".format(c, status))
+
+    print()
+    cluster_ini_path = path.join(common.CLUSTER_PATH, "cluster.ini")
+    if not path.exists(cluster_ini_path):
+        logging.warning("Not Configured, run config command to setup.")
+        return
+
+    conf = cluster.get_api_config({
+        "name": common.CLUSTER,
+        "desc": "None",
+        "max_players": "Unknown",
+        "password": None,
+        "server_port": "Unknown",
+        })
+    keys = ["name", "desc", "max_players", "password", "server_port"]
+    max_key_len = max([len(s) for s in keys])
+    logging.info("Cluster [%s] Configurations:" % common.CLUSTER)
+    logging.info("Location: %s" % common.CLUSTER_PATH)
+    for k in keys:
+        logging.info("{:>{}}: {}".format(k, max_key_len, conf[k]))
+
+    print()
+    logging.info("Join Room Now:")
+    logging.info("1. Search room name: %s in DST room page" % conf["name"])
+    logging.info("2. Press `~` and enter commmand(use LAN/WAN ip):")
+    logging.info("\tc_connect(\"IP_ADDR\", %s)" % conf["server_port"])
+
+
+def steam_install(args):
+    with bash.enter(common.STEAM_CMD_HOME):
+        # If running a 64bit OS
+        bash.shell_exec("sudo dpkg --add-architecture i386")
+        bash.shell_exec("sudo apt-get update")
+        # If running a 64bit OS
+        bash.shell_exec("sudo apt-get install -y lib32gcc1")
+
+        # If running a 64bit OS
+        bash.shell_exec("sudo apt-get install -y lib32stdc++6")
+        # If running a 32bit OS
+        # sudo apt-get install -y libgcc1      
+        bash.shell_exec("sudo apt-get install -y libcurl4-gnutls-dev:i386")
+
+        bash.shell_exec("wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz")
+        bash.shell_exec("tar -xvzf steamcmd_linux.tar.gz")
+
+    assert path.exists(common.STEAM_CMD)
+
+def dst_mods_update(args):
+    if not path.exists(common.DST_BIN_HOME):
+        logging.error("DST not installed, use update command first.")
+        return
+
+    logging.info("Updating dst mods...")
+
+    with bash.enter(common.DST_BIN_HOME):
+        code = bash.shell_exec(
+                "./dontstarve_dedicated_server_nullrenderer",
+                "-cluster", common.CLUSTER,
+                "-only_update_server_mods",
+                check_error=False,
+                )
+    if code != 0:
+        logging.error("Update dst mods failed.")
+        logging.error("May you add proxy params for updating.")
+    else:
+        logging.info("Updated dst mods...")
+
+@parser.register_command("update", help="DST Update")
+def dst_update(args):
+    if not path.exists(common.STEAM_CMD):
+        steam_install(args)
+
+    logging.info("Updating don't starve together...")
+
+    bash.shell_exec(
+            common.STEAM_CMD,
+            "+@ShutdownOnFailedCommand 1",
+            "+@NoPromptForPassword 1",
+            "+force_install_dir", common.DST_HOME,
+            "+login anonymous",
+            "+app_update 343050 validate +quit",
+            )
+    logging.info("Updated don't starve together...")
+
+    dst_mods_update(args)
+
+@parser.register_command("config", help="Cluster Config")
+def cluster_config(args):
+    if not path.exists(common.STEAM_CMD):
+        steam_install(args)
+
+    os.makedirs(common.CLUSTER_PATH, exist_ok=True)
+    bash.shell_exec("ln -sf %s/adminlist.txt %s/" % (
+        common.TEMP_ROOT, common.CLUSTER_PATH))
+
+    bash.shell_exec("mkdir -p %s/Master" % common.CLUSTER_PATH)
+    bash.shell_exec(
+        ("cp -f %s/worldgenoverride_much.lua "
+         "%s/Master/worldgenoverride.lua") % (
+            common.TEMP_ROOT, common.CLUSTER_PATH))
+
+    bash.shell_exec("mkdir -p %s/Caves" % common.CLUSTER_PATH)
+    bash.shell_exec(
+        ("cp -f %s/worldgenoverride_much_cave.lua "
+         "%s/Master/worldgenoverride.lua") % (
+            common.TEMP_ROOT, common.CLUSTER_PATH))
+
+    cluster.config(args)
+
+def follow_file(file, sleep_sec=0.1):
+    """ Yield each line from a file as they are written.
+    `sleep_sec` is the time to sleep after empty reads. """
+    line = ''
+    while True:
+        tmp = file.readline()
+        if tmp is not None and tmp != "":
+            line += tmp
+            if line.endswith("\n"):
+                yield line
+                line = ''
+        elif sleep_sec:
+            time.sleep(sleep_sec)
+
+@parser.add_option("-a", "--attach",
+              action="store_true", help="Attach Log Command Line")
+@parser.add_option("-f", "--follow",
+              action="store_true", help="Follow log file")
+@parser.register_command("log", help="Show DST Log")
+def dst_log(args):
+    if args.attach:
+        bash.shell_exec("screen -dr %s" % common.SCREEN_NAME)
+    else:
+        # with open("%s/dst.log" % common.LOG_DIR, "r") as f:
+        #     for l in follow_file(f):
+        #         print(l, end='')
+        cmd = "+F" if args.follow else ""
+        bash.shell_exec(
+                "less %s %s/dst.log" % (cmd, common.LOG_DIR),
+                check_error=False)
+
+def is_dst_running(cluster = common.CLUSTER, quiet=True):
+    out = bash.shell_output(
+        "screen -list | grep %s" % common.get_screen_name(cluster),
+        quiet=quiet)
+    return bool(out)
+
+@parser.add_option("-l", "--log",
+              action="store_true", help="Show log after started.")
+@parser.register_command("start", help="Start DST")
+def dst_start(args):
+    if is_dst_running():
+        logging.info("DST Server has been started.")
+        return
+
+    def _check_file(fpath):
+        if not path.exists(fpath):
+            logging.error("Missing file: %s" % fpath)
+            logging.error("May you run config command first.")
+            sys.exit(0)
+
+    with bash.enter(common.CLUSTER_PATH):
+        _check_file("cluster.ini")
+        _check_file("cluster_token.txt")
+        _check_file("Master/server.ini")
+        _check_file("Caves/server.ini")
+    dst_bin = path.join(common.DST_BIN_HOME,
+                        "dontstarve_dedicated_server_nullrenderer")
+    _check_file(dst_bin)
+
+    run_shared = """\
+{dst_bin} -cluster {cluster} -monitor_parent_process $$ -shard\
+    """.format(dst_bin=dst_bin, cluster=common.CLUSTER).strip()
+
+    log_file = path.join(
+        common.LOG_DIR,
+        "dst.log.%s" % datetime.today().strftime('%m-%d_%H.%M.%S'),
+            )
+    now = time.time()
+    for f in os.listdir(common.LOG_DIR):
+        fpath = path.join(common.LOG_DIR, f)
+        if os.path.isfile(f) and f.startswith("dst.log."):
+            if os.stat(fpath).st_mtime < now - 7 * 86400:
+              os.remove(fpath)
+
+    bash.shell_exec("ln -sf %s %s/dst.log" % (
+        log_file, common.LOG_DIR))
+
+    logging.info("Starting dst server...")
+    bash.shell_exec("screen -dmS", common.SCREEN_NAME)
+    with bash.enter(common.DST_BIN_HOME):
+        bash.shell_exec(
+            "screen -dr", common.SCREEN_NAME,
+            "-X stuff \"cd %s && ./start.sh %s %s %s\\n\"" % (
+                common.TEMP_ROOT, common.DST_BIN_HOME,
+                common.CLUSTER, log_file),
+            )
+    logging.info("Started dst server.")
+
+    if args.log:
+        time.sleep(1)
+        args.follow = True
+        args.attach = False
+        dst_log(args)
+
+@parser.register_command("restart", help="Restart DST")
+def dst_restart(args):
+    dst_stop(args)
+    dst_start(args)
+
+@parser.register_command("stop", help="Stop DST")
+def dst_stop(args):
+    if not is_dst_running():
+        logging.info("DST server has been stopped.")
+        return
+
+    logging.info("Stoping dst server...")
+    bash.shell_exec("screen -dr %s -X stuff \"c_shutdown()\\n\"" % common.SCREEN_NAME)
+    bash.shell_exec("screen -dr %s -X stuff \"c_shutdown()\\n\"" % common.SCREEN_NAME)
+    time.sleep(2)
+    bash.shell_exec("screen -dr %s -X quit" % common.SCREEN_NAME)
+    logging.info("Stoped dst server...")
+
+@parser.register_command("remove", help="Remove Cluster")
+def dst_remove(args):
+    """ Remove Cluster Data. """
+    logging.error("This operation triggers dangerous zone!")
+    logging.info("Abort this operation or you exactly know this meaning!")
+    logging.info("remove command will delete the cluster data directory with no recovery:")
+    logging.info("\t" + common.CLUSTER_PATH)
+
+    while True:
+        logging.info("Enter [Y] to confirm the delete operation, or [N] to abort.")
+        input_str = input("> ")
+        if input_str.upper() in ["Y", "YES"]:
+            break
+        elif input_str.upper() in ["N", "NO"]:
+            logger.info("Abort.")
+            sys.exit(0)
+
+    if is_dst_running():
+        dst_stop(args)
+
+    logging.info("Start to delete cluster: %s..." % common.CLUSTER)
+    while True:
+        logging.info("Remove all data in directory: %s" % common.CLUSTER_PATH)
+        logging.info("Enter [Y] to confirm, or [N] to abort.")
+        input_str = input("> ")
+        if input_str.upper() in ["Y", "YES"]:
+            break
+        elif input_str.upper() in ["N", "NO"]:
+            logger.info("Abort.")
+            sys.exit(0)
+    bash.shell_exec("rm -rf %s" % common.CLUSTER_PATH)
+    logging.info("Remove cluster: %s done." % common.CLUSTER)
+
+@parser.register_main()
+def main(args):
+    """
+    Command line tools to manage DST's status.
+
+    Naive command procedures are chains:
+        1. update (install and update steam & dst cmd)
+        2. config (setup cluster, including port, mods, etc.)
+        3. update (download or update dst related mods)
+        4. start/restart (start dst server and enjoy it.)
+    """
+    pass
+
+if __name__ == "__main__":
+    log.Init(log.DEBUG)
+    common.env_check()
+    parser.Parse(main_print_help=True)
+

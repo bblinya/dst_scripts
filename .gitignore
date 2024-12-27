@@ -2,3 +2,6 @@
 logs*
 
 mods/
+
+__pycache__
+templates/mods_file.json
