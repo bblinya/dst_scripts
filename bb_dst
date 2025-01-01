@@ -18,10 +18,17 @@ from dst import common, cluster, mods
 from bbcode.common import parser, log, bash
 from bbcode.common.parser import root_parser, sub_parser, ex_options
 
+@parser.add_option("-y", "--yes", action="store_true",
+                   help="accept all options.")
+@parser.add_option("-u", "--update", action="store_true",
+                   help="update mods after configure.")
 @parser.register_command("mods", help="Mod Manager")
 def dst_mods(args):
     """ Mod Manager: add/del/print mod info. """
-    mods.config_mods()
+    mods.config_mods(args)
+
+    if args.update:
+        dst_mods_update()
 
 @parser.register_command("status", help="Summary DST")
 def dst_status(args):
@@ -79,26 +86,30 @@ def steam_install(args):
 
     assert path.exists(common.STEAM_CMD)
 
-def dst_mods_update(args):
+def dst_mods_update():
     if not path.exists(common.DST_BIN_HOME):
         logging.error("DST not installed, use update command first.")
         return
 
     logging.info("Updating dst mods...")
 
+    mods.update_server_mods_setup()
+
     with bash.enter(common.DST_BIN_HOME):
-        code = bash.shell_exec(
+        bash.shell_exec(
                 "./dontstarve_dedicated_server_nullrenderer",
                 "-cluster", common.CLUSTER,
                 "-only_update_server_mods",
                 check_error=False,
                 )
-    if code != 0:
-        logging.error("Update dst mods failed.")
-        logging.error("May you add proxy params for updating.")
-    else:
-        logging.info("Updated dst mods...")
 
+    if mods.is_ready():
+        logging.info("Updated DST mods succeed.")
+    else:
+        logging.error("Mod download failed.")
+
+@parser.add_option("-m", "--mods", action="store_true",
+                  help="update mods together.")
 @parser.register_command("update", help="DST Update")
 def dst_update(args):
     if not path.exists(common.STEAM_CMD):
@@ -116,8 +127,11 @@ def dst_update(args):
             )
     logging.info("Updated don't starve together...")
 
-    dst_mods_update(args)
+    if args.mods:
+        dst_mods_update()
 
+@parser.add_option("-y", "--yes", action="store_true",
+                   help="accept all options.")
 @parser.register_command("config", help="Cluster Config")
 def cluster_config(args):
     if not path.exists(common.STEAM_CMD):
@@ -127,17 +141,17 @@ def cluster_config(args):
     bash.shell_exec("ln -sf %s/adminlist.txt %s/" % (
         common.TEMP_ROOT, common.CLUSTER_PATH))
 
-    bash.shell_exec("mkdir -p %s/Master" % common.CLUSTER_PATH)
+    bash.shell_exec("mkdir -p", common.MASTER_PATH)
     bash.shell_exec(
         ("cp -f %s/worldgenoverride_much.lua "
-         "%s/Master/worldgenoverride.lua") % (
-            common.TEMP_ROOT, common.CLUSTER_PATH))
+         "%s/worldgenoverride.lua") % (
+            common.TEMP_ROOT, common.MASTER_PATH))
 
-    bash.shell_exec("mkdir -p %s/Caves" % common.CLUSTER_PATH)
+    bash.shell_exec("mkdir -p", common.CAVES_PATH)
     bash.shell_exec(
         ("cp -f %s/worldgenoverride_much_cave.lua "
-         "%s/Master/worldgenoverride.lua") % (
-            common.TEMP_ROOT, common.CLUSTER_PATH))
+         "%s/worldgenoverride.lua") % (
+            common.TEMP_ROOT, common.CAVES_PATH))
 
     cluster.config(args)
 
@@ -173,6 +187,7 @@ def dst_log(args):
                 check_error=False)
 
 def is_dst_running(cluster = common.CLUSTER, quiet=True):
+    # check dst running failed and port in use?
     out = bash.shell_output(
         "screen -list | grep %s" % common.get_screen_name(cluster),
         quiet=quiet)
@@ -201,9 +216,10 @@ def dst_start(args):
                         "dontstarve_dedicated_server_nullrenderer")
     _check_file(dst_bin)
 
-    run_shared = """\
-{dst_bin} -cluster {cluster} -monitor_parent_process $$ -shard\
-    """.format(dst_bin=dst_bin, cluster=common.CLUSTER).strip()
+    if not mods.is_ready():
+        logging.error("Missing mod, you need to download mod first.")
+        logging.error("May you run `update -m` or `mods -yu`.")
+        sys.exit(0)
 
     log_file = path.join(
         common.LOG_DIR,
@@ -216,9 +232,6 @@ def dst_start(args):
             if os.stat(fpath).st_mtime < now - 7 * 86400:
               os.remove(fpath)
 
-    bash.shell_exec("ln -sf %s %s/dst.log" % (
-        log_file, common.LOG_DIR))
-
     logging.info("Starting dst server...")
     bash.shell_exec("screen -dmS", common.SCREEN_NAME)
     with bash.enter(common.DST_BIN_HOME):
@@ -228,6 +241,9 @@ def dst_start(args):
                 common.TEMP_ROOT, common.DST_BIN_HOME,
                 common.CLUSTER, log_file),
             )
+
+    bash.shell_exec("ln -sf %s %s/dst.log" % (
+        log_file, common.LOG_DIR))
     logging.info("Started dst server.")
 
     if args.log:
@@ -235,6 +251,8 @@ def dst_start(args):
         args.follow = True
         args.attach = False
         dst_log(args)
+
+    # mods.summary()
 
 @parser.register_command("restart", help="Restart DST")
 def dst_restart(args):
@@ -276,7 +294,9 @@ def dst_remove(args):
 
     logging.info("Start to delete cluster: %s..." % common.CLUSTER)
     while True:
+        ugc_mods = path.join(common.DST_HOME, "ugc_mods", common.CLUSTER)
         logging.info("Remove all data in directory: %s" % common.CLUSTER_PATH)
+        logging.info("Remove all data in directory: %s" % ugc_mods)
         logging.info("Enter [Y] to confirm, or [N] to abort.")
         input_str = input("> ")
         if input_str.upper() in ["Y", "YES"]:
@@ -284,7 +304,8 @@ def dst_remove(args):
         elif input_str.upper() in ["N", "NO"]:
             logger.info("Abort.")
             sys.exit(0)
-    bash.shell_exec("rm -rf %s" % common.CLUSTER_PATH)
+    bash.shell_exec("rm -rf", common.CLUSTER_PATH)
+    bash.shell_exec("rm -rf", ugc_mods)
     logging.info("Remove cluster: %s done." % common.CLUSTER)
 
 @parser.register_main()

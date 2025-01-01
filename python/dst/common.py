@@ -33,6 +33,8 @@ def env_check():
     # logging.info("Init Cluster: %s" % CLUSTER)
 
 CLUSTER_PATH = path.join(DST_KLEI, CLUSTER)
+MASTER_PATH = path.join(CLUSTER_PATH, "Master")
+CAVES_PATH = path.join(CLUSTER_PATH, "Caves")
 
 def get_screen_name(cluster_name):
     return "dst_server_" + cluster_name

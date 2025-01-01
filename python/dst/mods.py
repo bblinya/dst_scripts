@@ -60,7 +60,8 @@ add_mod("3361615927", desc="田园物语-花卉篇")
 # server
 add_mod("3050607025", desc="防卡好多招",
     STACK_SIZE=999, TREES_NO_STUMP=False,
-    TWIGGY=True,)
+    TWIGGY=True, CLEAN_DAYS=30,
+        )
 add_mod("666155465", desc="Show Me")
 add_mod("1207269058", desc="简易血条DST")
 add_mod("1301033176", desc="中文语言包",
@@ -142,13 +143,21 @@ def load_lua_mods(fpath):
         lua_mods.append(modId)
     return lua_mods
 
-def update_server_mods_setup(installed_mods):
+def update_server_mods_setup():
+    """ This function need be called before update mods, and
+            will be overrided by steam update command.
+    """
+    mod_file = path.join(common.CLUSTER_PATH, "Master/modoverrides.lua")
+    if not path.exists(mod_file):
+        return
+
+    installed_mods = load_lua_mods(mod_file)
     setup = ["ServerModSetup(\"%s\")" % s for s in installed_mods]
 
     setup_path = path.join(
             common.DST_HOME,
             "mods/dedicated_server_mods_setup.lua")
-    logger.info("Updating setup mods: %s" % setup_path)
+    logger.info("Updating mod setup file: %s" % setup_path)
     with open(setup_path, "w") as f:
         f.write("\n".join(setup))
 
@@ -181,8 +190,6 @@ def save_lua_mods(confs_path, installed_mods):
         with open(cp, "w") as f:
             f.write(conf)
 
-    update_server_mods_setup(installed_mods)
-
     logger.info("Cluster Mod populate done!")
 
 def parse_mod_configuration(mod_path):
@@ -196,11 +203,11 @@ def parse_mod_configuration(mod_path):
     mats = re.findall(pat, data)
     options = {}
     for mat in mats:
-        print(mat)
+        #  print(mat)
         data = re.findall("([a-zA-Z]+) *= *(\".*?\")?([^\" {]+?)?({.*})?,", mat)
         opt = {}
         for d in data:
-            print(d)
+            #  print(d)
             opt_data = []
             for v in re.findall("{.*?}", d[3][1:-2]):
                 # print(v)
@@ -210,9 +217,9 @@ def parse_mod_configuration(mod_path):
                     opt_one_data[k[0]] = _load_lua_type(k[1]) or _load_lua_type(k[2])
                 opt_data.append(opt_one_data)
 
-            print(_load_lua_type(d[1]), _load_lua_type(d[2]))
+            #  print(_load_lua_type(d[1]), _load_lua_type(d[2]))
             opt[d[0]] = _load_lua_type(d[1]) or opt_data or _load_lua_type(d[2])
-        print(opt)
+        #  print(opt)
 
         option = {}
         def _set_opt(key, miss_error = False):
@@ -238,6 +245,24 @@ def parse_mod_configuration(mod_path):
     return options
 
 _MODS_INFO = {}
+
+def is_ready():
+    """ Check all mods are downloaded local. """
+    mod_file = path.join(common.CLUSTER_PATH, "Master/modoverrides.lua")
+    if not path.exists(mod_file):
+        return True
+
+    installed_mods = load_lua_mods(mod_file)
+    for m in installed_mods:
+        locs = bash.shell_output(
+                "find", common.DST_HOME,
+                "-name '*%s'" % m)
+        locs = [s.strip() for s in locs.split("\n") if s.strip()]
+        if len(locs) == 0:
+            logger.warning("Mod: %s not downloaded" % m)
+            return False
+
+    return True
 
 def print_mod_info(modId, opt_keys):
     if modId not in _MODS_INFO:
@@ -288,8 +313,9 @@ def print_mod_info(modId, opt_keys):
                     d.get("data", None), desc,
                     max(20 - count_chi_char(desc), 1), d.get("hover", "")))
 
-def config_mods():
+def config_mods(args):
     installed_mods = [
+        "3361615927",       # 田园物语-花卉篇
         "3050607025",       # 防卡好多招, Optimizor
         "666155465",        # ShowMe
         "1207269058",       # Simple Health Bar
@@ -307,6 +333,8 @@ def config_mods():
         "1595631294",       # 智能小木牌
         "2528541304",       # Not Enough Turfs
         "1607644339",       # More cooking/整组烹饪、整组喂鸟
+        "356930882",        # Infinite Tent Uses
+        "375850593",        # Extra Equip Slots
             ]
 
     mod_file = path.join(common.CLUSTER_PATH, "Master/modoverrides.lua")
@@ -328,7 +356,7 @@ Supported Commands:
 - [+modId,desc=v1,conf1=v2,...] format string to add custom mod.
 - [-modId] format string to remove mod.\
         """)
-        input_str = input("> ")
+        input_str = "Y" if args.yes else input("> ")
         if input_str.upper() in ["Y", "YES"]:
             logger.info("Use above mods for cluster")
             break
@@ -387,6 +415,7 @@ Supported Commands:
 
     save_mods()
     save_lua_mods(
-            [path.join(s, "modoverrides.lua") for s in ins_path],
+            [ path.join(common.MASTER_PATH, "modoverrides.lua"),
+              path.join(common.CAVES_PATH, "modoverrides.lua")],
             installed_mods)
 
