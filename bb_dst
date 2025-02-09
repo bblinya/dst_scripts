@@ -115,6 +115,10 @@ def dst_update(args):
     if not path.exists(common.STEAM_CMD):
         steam_install(args)
 
+    is_running = is_dst_running()
+    if is_running:
+        dst_stop(args)
+
     logging.info("Updating don't starve together...")
 
     bash.shell_exec(
@@ -129,6 +133,9 @@ def dst_update(args):
 
     if args.mods:
         dst_mods_update()
+
+    if is_running:
+        dst_start(args)
 
 @parser.add_option("-y", "--yes", action="store_true",
                    help="accept all options.")
@@ -175,13 +182,13 @@ def follow_file(file, sleep_sec=0.1):
               action="store_true", help="Follow log file")
 @parser.register_command("log", help="Show DST Log")
 def dst_log(args):
-    if args.attach:
+    if getattr(args, "attach", False):
         bash.shell_exec("screen -dr %s" % common.SCREEN_NAME)
     else:
         # with open("%s/dst.log" % common.LOG_DIR, "r") as f:
         #     for l in follow_file(f):
         #         print(l, end='')
-        cmd = "+F" if args.follow else ""
+        cmd = "+F" if getattr(args, "follow", False) else ""
         bash.shell_exec(
                 "less %s %s/dst.log" % (cmd, common.LOG_DIR),
                 check_error=False)
@@ -246,7 +253,7 @@ def dst_start(args):
         log_file, common.LOG_DIR))
     logging.info("Started dst server.")
 
-    if args.log:
+    if getattr(args, "log", False):
         time.sleep(1)
         args.follow = True
         args.attach = False
