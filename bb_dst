@@ -35,10 +35,9 @@ def dst_status(args):
     """ Print Clusters' Information. """
     logging.info("Cluster Running Status:")
     for c in common.ALL_CLUSTERS:
-        status = log.color_string("RUNNING", log.INFO) \
-                if is_dst_running(c) else \
-                log.color_string("STOPPED", log.ERROR)
-        logging.info("{:>10}: {}".format(c, status))
+        status = f"RUNNING" if is_dst_running(c) \
+                else f"{log.C_ERROR}STOPPED{log.C_INFO}"
+        logging.info(f"{c:>10}: {status}{' [X]' if common.CLUSTER == c else ''}")
 
     print()
     cluster_ini_path = path.join(common.CLUSTER_PATH, "cluster.ini")
@@ -58,13 +57,14 @@ def dst_status(args):
     logging.info("Cluster [%s] Configurations:" % common.CLUSTER)
     logging.info("Location: %s" % common.CLUSTER_PATH)
     for k in keys:
-        logging.info("{:>{}}: {}".format(k, max_key_len, conf[k]))
+        logging.info("· {:>{}}: {}".format(k, max_key_len, conf[k]))
 
     print()
     logging.info("Join Room Now:")
     logging.info("1. Search room name: %s in DST room page" % conf["name"])
     logging.info("2. Press `~` and enter commmand(use LAN/WAN ip):")
-    logging.info("\tc_connect(\"IP_ADDR\", %s)" % conf["server_port"])
+    logging.info("\tc_connect(\"192.168.2.163\", %s)" % conf["server_port"])
+    logging.info("\tc_connect(\"114.66.27.85\", %s)" % conf["server_port"])
 
 
 def steam_install(args):
@@ -75,10 +75,12 @@ def steam_install(args):
         # If running a 64bit OS
         bash.shell_exec("sudo apt-get install -y lib32gcc1")
 
+
         # If running a 64bit OS
         bash.shell_exec("sudo apt-get install -y lib32stdc++6")
         # If running a 32bit OS
         # sudo apt-get install -y libgcc1      
+        # new linux system may miss this lib
         bash.shell_exec("sudo apt-get install -y libcurl4-gnutls-dev:i386")
 
         bash.shell_exec("wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz")
@@ -320,10 +322,10 @@ def main(args):
     """
     Command line tools to manage DST's status.
 
-    Naive command procedures are chains:
+    Follow these steps to initialize a new dst server:
         1. update (install and update steam & dst cmd)
         2. config (setup cluster, including port, mods, etc.)
-        3. update (download or update dst related mods)
+        3. mods -yu (download or update dst related mods)
         4. start/restart (start dst server and enjoy it.)
     """
     pass

@@ -40,5 +40,5 @@ def get_screen_name(cluster_name):
     return "dst_server_" + cluster_name
 SCREEN_NAME = get_screen_name(CLUSTER)
 
-LOG_DIR = path.join(CODE_ROOT, "logs_" + CLUSTER)
+LOG_DIR = path.join(CODE_ROOT, "logs", CLUSTER or "unknown")
 os.makedirs(LOG_DIR, exist_ok=True)

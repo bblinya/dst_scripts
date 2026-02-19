@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from . import mods
 from . import common
 
+from bbcode.common import bash
+
 logger = logging.getLogger(common.CLUSTER or "Cluster")
 
 TOKEN_BBWM_1 = "pds-g^KU_wGWotiLQ^oX7K/9mB9Ul+P2ynzAA+bBJBTUViYHaY0k0FIx5SVsw="
@@ -27,7 +29,7 @@ def config_token(args):
     while not token.startswith("pds-"):
         logger.info("""\
 Cluster token not exist, type one option (Enter to confirm):
-1. [Y] to use embeded token: %s;
+1. [Y] to use embeded token BBWM: %s;
 2. [pds-] prefix string to use custom token,
     you can get token from the official klei server:
     https://accounts.klei.com/account/game/servers?game=DontStarveTogether
@@ -184,10 +186,11 @@ Cluster Configure, use options below by default:
     # Port to communicate with shard instance if cave enabled, ignore if not concern
     master_port\t= {master_port}
 
-     Server port to interact with different dst, players can find current
+    # Server port to interact with different dst, players can find current
     #   room in dst search page, or press `~` to enter command line and
     #   type server IP(LAN or WAN) & this port, e.g.:
     #       c_connect("192.168.2.163", {server_port})
+    #       c_connect("114.66.27.85", {server_port})
     #   The second approach can reach less network delay in theoretically.
     # These three ports are used by master instance, cave's ports are increased
     #   by +1 and find available ports.
@@ -233,6 +236,20 @@ choose one option and type (Enter to confirm):
             max_players=conf["max_players"],
             password=conf["password"],
             master_port=conf["master_port"],))
+
+    autossh_cmd = """
+autossh -NR {server_host}:{server_port}:{local_host}:{local_port} rainyun
+    """
+    autossh_fpath = path.join(common.CLUSTER_PATH, "proxy.sh")
+    with open(autossh_fpath, "w") as f:
+        f.write(autossh_cmd.format(
+            server_host = "*",
+            server_port = conf["server_port"],
+            local_host = "127.0.0.1",
+            local_port = conf["server_port"]
+            ))
+    bash.shell_exec("chmod +x", autossh_fpath)
+    logger.info(f"Register [autossh] proxy: {autossh_fpath}")
 
     with open(path.join(common.MASTER_PATH, "server.ini"), "w") as f:
         f.write(CLUSTRE_SERVER_TEMP.format(
