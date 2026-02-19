@@ -18,6 +18,8 @@ from dst import common, cluster, mods
 from bbcode.common import parser, log, bash
 from bbcode.common.parser import root_parser, sub_parser, ex_options
 
+@parser.add_option("--preset", type=int, default=1,
+                   help="Use preset to config mods.")
 @parser.add_option("-y", "--yes", action="store_true",
                    help="accept all options.")
 @parser.add_option("-u", "--update", action="store_true",
@@ -110,11 +112,13 @@ def dst_mods_update():
     else:
         logging.error("Mod download failed.")
 
+@parser.add_option("-f", "--force", action="store_true",
+                   help="force to update steamcmd")
 @parser.add_option("-m", "--mods", action="store_true",
                   help="update mods together.")
 @parser.register_command("update", help="DST Update")
 def dst_update(args):
-    if not path.exists(common.STEAM_CMD):
+    if args.force or (not path.exists(common.STEAM_CMD)):
         steam_install(args)
 
     is_running = is_dst_running()
@@ -141,6 +145,8 @@ def dst_update(args):
 
 @parser.add_option("-y", "--yes", action="store_true",
                    help="accept all options.")
+@parser.add_option("-u", "--update", action="store_true",
+                   help="update mods after configure.")
 @parser.register_command("config", help="Cluster Config")
 def cluster_config(args):
     if not path.exists(common.STEAM_CMD):
@@ -163,6 +169,9 @@ def cluster_config(args):
             common.TEMP_ROOT, common.CAVES_PATH))
 
     cluster.config(args)
+
+    if args.update:
+        dst_mods_update()
 
 def follow_file(file, sleep_sec=0.1):
     """ Yield each line from a file as they are written.

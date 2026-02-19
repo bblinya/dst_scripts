@@ -27,18 +27,26 @@ def count_chi_char(text):
     return count
 
 def mod_string(modId):
-    mod = MODS[modId]
+    mod: dict = MODS[modId]
     mod_str = "{:>10}, desc={:{}}".format(
             modId, mod["desc"],
             max(40 - count_chi_char(mod["desc"]), 1))
+
+    is_deprecated = mod.get("Deprecated", False)
+    install_by_default = mod.get("InstallByDefault", False)
+
+    mod_str = f"{'+' if install_by_default else ' '} {mod_str}"
+    mod_str = f"{'!' if is_deprecated else ' '}{mod_str}"
+
     conf = ["=".join([k, str(v)]) for k, v in mod.items() \
-            if k != "desc"]
+            if k not in ["desc", "Deprecated", "InstallByDefault"]]
     mod_str += " | " + ", ".join(conf)
     return mod_str
 
 def summary(installed_mods = []):
+    logger.info(f"+: InstallByDefault; !: Deprecated")
     if len(installed_mods) > 0:
-        logger.info("Installed Mods:")
+        logger.info(f"Installed Mods ({len(installed_mods)}):")
         for modId in sorted(installed_mods):
             logger.info(mod_string(modId))
 
@@ -55,65 +63,112 @@ add_mod("1505270912", desc="Tropical Experience | The Volcano Biome",
         set_idioma="stringsCh")
 add_mod("1289779251", desc="Cherry Forest")
 
-add_mod("3361615927", desc="田园物语-花卉篇")
+add_mod("3361615927", desc="田园物语-花卉篇",
+        InstallByDefault=True,
+        )
 
 # server
+# !!! dst client should download this mod manually.
+# Don't know why.
 add_mod("3050607025", desc="防卡好多招",
-    STACK_SIZE=999, TREES_NO_STUMP=False,
-    TWIGGY=True, CLEAN_DAYS=30,
+        InstallByDefault=True,
+        STACK_SIZE=999, TREES_NO_STUMP=False,
+        TWIGGY=True, CLEAN_DAYS=30,
         )
-add_mod("666155465", desc="Show Me")
-add_mod("1207269058", desc="简易血条DST")
+add_mod("666155465", desc="Show Me",
+        InstallByDefault=True
+        )
+add_mod("1207269058", desc="简易血条DST",
+        InstallByDefault=True
+        )
 add_mod("1301033176", desc="中文语言包",
-                LANG="simplified")
-add_mod("1860955902", desc="Global Position")
-add_mod("458587300", desc="Fast Travel", Traval_Cost=128)
+        InstallByDefault=True,
+        LANG="simplified")
+add_mod("1860955902", desc="Global Position", Deprecated=True,)
+add_mod("378160973", desc="Global Position",
+        InstallByDefault=True
+        )
+add_mod("458587300", desc="Fast Travel", Deprecated=True, Traval_Cost=128)
+add_mod("1530801499", desc="Fast Travel",
+        InstallByDefault=True
+        )
+
+
 add_mod("462434129", desc="Restart(重生)",
-                MOD_RESTART_CD_RESTART=0, MOD_RESTART_CD_RESURRECT=0, MOD_RESTART_CD_KILL=0)
+        Deprecated=True,
+        InstallByDefault=True,
+        MOD_RESTART_CD_RESTART=0, MOD_RESTART_CD_RESURRECT=0, MOD_RESTART_CD_KILL=0)
 
 # person action
-add_mod("501385076", desc="快速采集")
-add_mod("2823458540", desc="富贵险中求")
+add_mod("501385076", desc="快速采集",
+        Deprecated=True,
+        InstallByDefault=True
+        )
+add_mod("2823458540", desc="富贵险中求",
+        InstallByDefault=True
+        )
 add_mod("374550642", desc="Increased Stack Size")
-add_mod("375850593", desc="Extra Equip Slots: may cave problem")
+add_mod("375850593", desc="Extra Equip Slots: may cave problem",
+        Deprecated=True,
+        InstallByDefault=True,)
+add_mod("2798599672", desc="4/5/6格装备栏（适配mod版）",
+        # InstallByDefault=True
+        )
 add_mod("2950956942", desc="更多动作")
 
 # items
-add_mod("356930882", desc="Infinite Tent Uses")
-add_mod("1898181913", desc="冰箱  no rod")
-add_mod("466732225", desc="No Thermal Stone Durability")
-add_mod("380423963", desc="Mineable Gems")
+add_mod("356930882", desc="Infinite Tent Uses",
+        InstallByDefault=True
+        )
+add_mod("1898181913", desc="冰箱 no rod",
+        Deprecated=True,
+        InstallByDefault=True,)
+# add_mod("462372013", desc="Always Fresh",
+#         InstallByDefault=True
+#         )
+
+add_mod("466732225", desc="No Thermal Stone Durability",
+        Deprecated=True,
+        InstallByDefault=True,)
+add_mod("380423963", desc="Mineable Gems",
+        Deprecated=True,
+        InstallByDefault=True,)
 add_mod("1595631294", desc="智能小木牌",
-                Icebox=True, DragonflyChest=True)
-add_mod("2528541304", desc="Not Enough Turfs")
-add_mod("1607644339", desc="More cooking/整组烹饪、整组喂鸟")
+        InstallByDefault=True,
+        Icebox=True, DragonflyChest=True)
+add_mod("2528541304", desc="Not Enough Turfs",
+        InstallByDefault=True
+        )
+add_mod("1607644339", desc="More cooking/整组烹饪、整组喂鸟",
+        InstallByDefault=True
+        )
 
 # characters
 add_mod("1645013096", desc="SONOKO NOGI: 乃木园子(22M)")
 add_mod("684098549", desc="Remilia Scarlet 【蕾米莉娅斯卡雷特】")
 
-MOD_FILE = path.join(common.TEMP_ROOT, "mods_file.json")
-def load_mods():
-    if not path.exists(MOD_FILE):
-        return
+# MOD_FILE = path.join(common.TEMP_ROOT, "mods_file.json")
+# def load_mods():
+#     if not path.exists(MOD_FILE):
+#         return
 
-    with open(MOD_FILE, "r") as f:
-        loaded_mods = json.load(f)
+#     with open(MOD_FILE, "r") as f:
+#         loaded_mods = json.load(f)
 
-    for k, v in loaded_mods.items():
-        MODS.setdefault(k, {})
-        MODS[k].update(v)
+#     for k, v in loaded_mods.items():
+#         MODS.setdefault(k, {})
+#         MODS[k].update(v)
 
-load_mods()
+# load_mods()
 
-def save_mods():
-    mod_str = {k: json.dumps(v, ensure_ascii=False) \
-            for k, v in MODS.items()}
-    mod_str = ["\n  \"%s\": %s" % (k, v) for k, v in mod_str.items()]
-    mod_str = ",".join(mod_str)
-    mod_str = "{%s\n}" % mod_str
-    with open(MOD_FILE, "w") as f:
-        f.write(mod_str)
+# def save_mods():
+#     mod_str = {k: json.dumps(v, ensure_ascii=False) \
+#             for k, v in MODS.items()}
+#     mod_str = ["\n  \"%s\": %s" % (k, v) for k, v in mod_str.items()]
+#     mod_str = ",".join(mod_str)
+#     mod_str = "{%s\n}" % mod_str
+#     with open(MOD_FILE, "w") as f:
+#         f.write(mod_str)
 
 def _load_lua_type(val: str):
     val = val.strip()
@@ -314,32 +369,25 @@ def print_mod_info(modId, opt_keys):
                     max(20 - count_chi_char(desc), 1), d.get("hover", "")))
 
 def config_mods(args):
-    installed_mods = [
-        "3361615927",       # 田园物语-花卉篇
-        "3050607025",       # 防卡好多招, Optimizor
-        "666155465",        # ShowMe
-        "1207269058",       # Simple Health Bar
-        "1301033176",       # Chinese Language Pack
-        "1860955902",       # Global Position
-        "458587300",        # Fast Traval
-        "462434129",        # Restart
-
-        "501385076",        # 快速采集
-        "2823458540",       # 富贵险中求
-        # "374550642",        # Increased Stack Size, conflict with Optimizor
-        "1898181913",       # 冰箱  no rod
-        "466732225",        # No Thermal Stone Durability
-        "380423963",        # Mineable Gems
-        "1595631294",       # 智能小木牌
-        "2528541304",       # Not Enough Turfs
-        "1607644339",       # More cooking/整组烹饪、整组喂鸟
-        "356930882",        # Infinite Tent Uses
-        "375850593",        # Extra Equip Slots
-            ]
+    installed_mods = []
 
     mod_file = path.join(common.CLUSTER_PATH, "Master/modoverrides.lua")
-    if path.exists(mod_file):
+
+    preset = getattr(args, "preset", 1)
+
+    if preset == 0: # no use mods
+        logger.info("No use mods.")
+        pass
+    elif preset == 1 and path.exists(mod_file):
+        logger.info("Load existed mods.")
         installed_mods = load_lua_mods(mod_file)
+    elif preset in [1, 2]:
+        logger.info("Use pre-defined mods.")
+        installed_mods = [modId for modId, conf in MODS.items() \
+                if conf.get("InstallByDefault", False)]
+    else:
+        logger.error(f"Unknown preset: {preset}, candidates: [0, 1, 2]")
+        sys.exit()
 
     summary(installed_mods)
 
@@ -413,7 +461,7 @@ Supported Commands:
         else: # act == "-"
             installed_mods.remove(mod_config["modId"])
 
-    save_mods()
+    # save_mods()
     save_lua_mods(
             [ path.join(common.MASTER_PATH, "modoverrides.lua"),
               path.join(common.CAVES_PATH, "modoverrides.lua")],

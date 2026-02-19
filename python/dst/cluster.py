@@ -237,19 +237,17 @@ choose one option and type (Enter to confirm):
             password=conf["password"],
             master_port=conf["master_port"],))
 
-    autossh_cmd = """
-autossh -NR {server_host}:{server_port}:{local_host}:{local_port} rainyun
-    """
-    autossh_fpath = path.join(common.CLUSTER_PATH, "proxy.sh")
-    with open(autossh_fpath, "w") as f:
-        f.write(autossh_cmd.format(
-            server_host = "*",
-            server_port = conf["server_port"],
-            local_host = "127.0.0.1",
-            local_port = conf["server_port"]
-            ))
-    bash.shell_exec("chmod +x", autossh_fpath)
-    logger.info(f"Register [autossh] proxy: {autossh_fpath}")
+#     autossh_cmd = """
+# autossh -NR {server_host}:{server_port}:{local_host}:{local_port} rainyun
+#     """.replace("\n", "")
+#     autossh_cmd = autossh_cmd.format(
+#             server_host = "*",
+#             server_port = conf["server_port"],
+#             local_host = "127.0.0.1",
+#             local_port = conf["server_port"]
+#             )
+#     # bash.shell_exec("chmod +x", autossh_fpath)
+#     logger.info(f"""Remember proxy udp port: {autossh_cmd}""")
 
     with open(path.join(common.MASTER_PATH, "server.ini"), "w") as f:
         f.write(CLUSTRE_SERVER_TEMP.format(
